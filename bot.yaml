@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bot
+spec:
+  containers:
+    - image: nekit28/bot:first
+      name: bot
+      securityContext:
+          runAsUser: 0
