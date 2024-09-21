@@ -30,6 +30,8 @@ spec:
   containers:
     - image: nekit28/bot:first
       name: bot
+      securityContext:
+          runAsUser: 0
       ports:
         - containerPort: 80
 7) kubectl create -f bot.yaml
