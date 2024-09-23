@@ -63,3 +63,48 @@ spec:
 7) kubectl create -f bot.yaml
 8) kubectl apply -f cinema-deployment.yaml
 9) kubectl logs deployment/cinema-deployment для логов
+10) Попытка поднять базу данных в StatefulSet c Volume
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgresdb-statefulset
+spec:
+  serviceName: postgresdb-service
+  replicas: 1  # сколько подов требуется в стейтфулсете
+  template:
+    metadata:
+      labels:
+        # label нужен из тех же соображений, что и в деплойменте.
+        app: postgresdb-app
+    spec:
+      containers:
+        - name: postgresdb-container
+          image: postgres:15
+          volumeMounts:
+            - mountPath: "/data/db"
+              name: postgresdb-pvc
+          # Выставляем наружу дефолтный порт
+          ports:
+            - containerPort: 5432
+              name: postgres
+          env:
+            - name: POSTGRES_DB
+              value: administration
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+
+  # selector нужен из тех же соображений, что и в деплойменте.
+  selector:
+    matchLabels:
+      app: postgresdb-app
+  volumeClaimTemplates:
+    - metadata:
+        name: postgresdb-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce # можно читать/писать только на одной ноде
+        resources:
+          requests:
+            storage: 100Mi
