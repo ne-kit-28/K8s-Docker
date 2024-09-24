@@ -26,7 +26,7 @@ spec:
         - containerPort: 80
 _______________________________________________________
 # cinema-deployment.yaml
-apiVersion: apps/v1 //apps так как это Deployment
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cinema-deployment
@@ -39,10 +39,10 @@ spec:
     spec:
       containers:
         - name: cinema-container
-          image: nekit28/cinema:first
-          imagePullPolicy: Never // IfNotPresent
+          image: nekit28/cinema:withoutKafka2
+          imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 40001
+            - containerPort: 8080
   selector:
     matchLabels:
       app: cinema-app
@@ -54,7 +54,7 @@ metadata:
   name: bot
 spec:
   containers:
-    - image: nekit28/bot:first
+    - image: nekit28/bot:withoutkafka
       name: bot
       securityContext:
           runAsUser: 0
@@ -63,7 +63,7 @@ spec:
 7) kubectl create -f bot.yaml
 8) kubectl apply -f cinema-deployment.yaml
 9) kubectl logs deployment/cinema-deployment для логов
-10) Попытка поднять базу данных в StatefulSet c Volume
+10) Попытка поднять базу данных в StatefulSet c Volume(сама бд)
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -94,7 +94,6 @@ spec:
               value: postgres
             - name: POSTGRES_PASSWORD
               value: postgres
-
   # selector нужен из тех же соображений, что и в деплойменте.
   selector:
     matchLabels:
@@ -108,3 +107,28 @@ spec:
         resources:
           requests:
             storage: 100Mi
+11) postgres-service.yaml
+# k8s/postgres-service.yaml для доступа к бд
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresdb-service
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app: postgresdb-app
+12) Сервис для синема, чтобы можно было к нему обращаться + балансировщик
+apiVersion: v1
+kind: Service
+metadata:
+  name: cinema
+spec:
+  type: LoadBalancer
+  selector:
+    app: cinema-app
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+13) Кафка
