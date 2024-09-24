@@ -4,7 +4,7 @@ metadata:
   name: bot
 spec:
   containers:
-    - image: nekit28/bot:first
+    - image: nekit28/bot:withoutKafka
       name: bot
       securityContext:
           runAsUser: 0

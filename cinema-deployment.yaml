@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cinema-deployment
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: cinema-app
+    spec:
+      containers:
+        - name: cinema-container
+          image: nekit28/cinema:withoutKafka2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+  selector:
+    matchLabels:
+      app: cinema-app
