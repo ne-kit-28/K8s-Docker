@@ -1,3 +1,7 @@
+Хорошие url:
+https://habr.com/ru/articles/752586/
+https://habr.com/ru/companies/ruvds/articles/438984/
+https://bool.dev/blog/detail/chto-takoe-pods-nodes-containers-i-clusters-v-kubernetes
 # K8s-Docker
 1) docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 2)Tag your image build.
